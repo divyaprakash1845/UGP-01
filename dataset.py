@@ -22,18 +22,16 @@ CHANNELS = ['Fz', 'FCz', 'Pz', 'Oz', 'C3', 'C4', 'P3', 'P4', 'ECG1']
 NBACK_MAP = {'zeroBACK.set': 0, 'twoBACK.set': 1}
 MATB_MAP  = {'MATBeasy.set': 0, 'MATBdiff.set': 1}
 def detect_paths():
-    """Simplified path detector for local 'raw_data' folder"""
-    # Get the directory where this script is located
+    """Standardized path detector for the 'raw_data' folder"""
+    # Get the directory where dataset.py is actually saved
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # Define the input and output paths
+    # Path for input and output relative to the script
     data_root = os.path.join(script_dir, 'raw_data')
     output_dir = os.path.join(script_dir, 'processed_data')
 
-    # Verification check
     if not os.path.exists(data_root):
-        print(f"❌ ERROR: 'raw_data' folder not found in {script_dir}")
-        print("Please ensure your subject folders (sub-01, etc.) are inside 'raw_data/'.")
+        print(f"❌ Error: 'raw_data' folder not found in {script_dir}")
         return None, None
 
     return data_root, output_dir
