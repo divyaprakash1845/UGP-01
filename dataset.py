@@ -22,18 +22,23 @@ CHANNELS = ['Fz', 'FCz', 'Pz', 'Oz', 'C3', 'C4', 'P3', 'P4', 'ECG1']
 NBACK_MAP = {'zeroBACK.set': 0, 'twoBACK.set': 1}
 MATB_MAP  = {'MATBeasy.set': 0, 'MATBdiff.set': 1}
 def detect_paths():
-    """Robust path detector for local 'raw_data' folder"""
-    # Force the path to be relative to the script location
+    """Points to raw_data folder located OUTSIDE the repository folder"""
+    # Get the directory of the current script (e.g., /content/UGP-01)
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # If we are in Colab and just cloned, we might need to look one level up or down
-    data_root = os.path.join(script_dir, 'raw_data')
+    # Go one level up to /content/
+    parent_dir = os.path.dirname(script_dir)
+    
+    # Define paths
+    data_root = os.path.join(parent_dir, 'raw_data')
     output_dir = os.path.join(script_dir, 'processed_data')
 
-    # If the folder isn't found, we return the expected strings anyway 
-    # so the script gives a 'Folder Not Found' error instead of a 'TypeError'
+    # Verification
+    if not os.path.exists(data_root):
+        # Fallback for standard Colab root if parent_dir isn't /content
+        data_root = '/content/raw_data'
+        
     return data_root, output_dir
-
 class MaestroPreprocessor:
     def __init__(self, root_dir, output_dir):
         self.root_dir = root_dir
