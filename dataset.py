@@ -23,30 +23,46 @@ NBACK_MAP = {'zeroBACK.set': 0, 'twoBACK.set': 1}
 MATB_MAP  = {'MATBeasy.set': 0, 'MATBdiff.set': 1}
 
 def detect_paths():
-    """Universal path detector for Colab, Kaggle, and Local"""
-    data_root, output_dir = None, None
+    """Universal path detector"""
+    # 1. Get the folder where THIS script (dataset.py) is located
+    # This solves the issue if the TA runs it from a different directory
+    script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # 1. Kaggle
+    # Default output is inside the script's folder
+    output_dir = os.path.join(script_dir, 'processed_data')
+    data_root = None
+
+    # 2. Check Input Sources
+    # Option A: Kaggle Input
     if os.path.exists('/kaggle/input'):
         potential = glob.glob('/kaggle/input/*')
         if potential: data_root = potential[0]
         output_dir = '/kaggle/working/processed_data'
-    # 2. Colab
-    elif os.path.exists('/content'):
-        data_root = '/content/drive/MyDrive' if os.path.exists('/content/drive/MyDrive') else '/content'
-        output_dir = '/content/processed_data'
-    # 3. Local
-    else:
-        data_root = os.getcwd()
-        output_dir = os.path.join(os.getcwd(), 'processed_data')
+        
+    # Option B: Check relative to script (e.g., sub-01 is next to dataset.py)
+    elif os.path.exists(os.path.join(script_dir, 'sub-01')):
+        data_root = script_dir # The data is right here!
+        
+    # Option C: Check standard Colab Drive path
+    elif os.path.exists('/content/drive/MyDrive'):
+         # Fallback search if not found yet
+         pass
 
-    # Recursive search for 'sub-XX'
-    if data_root:
-        for root, dirs, files in os.walk(data_root):
+    # 3. Recursive Search (The Safety Net)
+    # Search inside the script_dir first
+    if not data_root:
+        for root, dirs, files in os.walk(script_dir):
             if any(d.startswith('sub-') for d in dirs):
                 data_root = root
                 break
     
+    # 4. Search Drive if still null
+    if not data_root and os.path.exists('/content/drive/MyDrive'):
+        for root, dirs, files in os.walk('/content/drive/MyDrive'):
+             if any(d.startswith('sub-') for d in dirs):
+                data_root = root
+                break
+
     return data_root, output_dir
 
 class MaestroPreprocessor:
