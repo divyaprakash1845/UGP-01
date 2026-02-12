@@ -21,47 +21,20 @@ FIXED_LEN = int(TARGET_SFREQ * CLIP_LEN_SEC) # 750 samples
 CHANNELS = ['Fz', 'FCz', 'Pz', 'Oz', 'C3', 'C4', 'P3', 'P4', 'ECG1']
 NBACK_MAP = {'zeroBACK.set': 0, 'twoBACK.set': 1}
 MATB_MAP  = {'MATBeasy.set': 0, 'MATBdiff.set': 1}
-
 def detect_paths():
-    """Universal path detector"""
-    # 1. Get the folder where THIS script (dataset.py) is located
-    # This solves the issue if the TA runs it from a different directory
+    """Simplified path detector for local 'raw_data' folder"""
+    # Get the directory where this script is located
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # Default output is inside the script's folder
+    # Define the input and output paths
+    data_root = os.path.join(script_dir, 'raw_data')
     output_dir = os.path.join(script_dir, 'processed_data')
-    data_root = None
 
-    # 2. Check Input Sources
-    # Option A: Kaggle Input
-    if os.path.exists('/kaggle/input'):
-        potential = glob.glob('/kaggle/input/*')
-        if potential: data_root = potential[0]
-        output_dir = '/kaggle/working/processed_data'
-        
-    # Option B: Check relative to script (e.g., sub-01 is next to dataset.py)
-    elif os.path.exists(os.path.join(script_dir, 'sub-01')):
-        data_root = script_dir # The data is right here!
-        
-    # Option C: Check standard Colab Drive path
-    elif os.path.exists('/content/drive/MyDrive'):
-         # Fallback search if not found yet
-         pass
-
-    # 3. Recursive Search (The Safety Net)
-    # Search inside the script_dir first
-    if not data_root:
-        for root, dirs, files in os.walk(script_dir):
-            if any(d.startswith('sub-') for d in dirs):
-                data_root = root
-                break
-    
-    # 4. Search Drive if still null
-    if not data_root and os.path.exists('/content/drive/MyDrive'):
-        for root, dirs, files in os.walk('/content/drive/MyDrive'):
-             if any(d.startswith('sub-') for d in dirs):
-                data_root = root
-                break
+    # Verification check
+    if not os.path.exists(data_root):
+        print(f"❌ ERROR: 'raw_data' folder not found in {script_dir}")
+        print("Please ensure your subject folders (sub-01, etc.) are inside 'raw_data/'.")
+        return None, None
 
     return data_root, output_dir
 
