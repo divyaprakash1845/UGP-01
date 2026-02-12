@@ -22,18 +22,16 @@ CHANNELS = ['Fz', 'FCz', 'Pz', 'Oz', 'C3', 'C4', 'P3', 'P4', 'ECG1']
 NBACK_MAP = {'zeroBACK.set': 0, 'twoBACK.set': 1}
 MATB_MAP  = {'MATBeasy.set': 0, 'MATBdiff.set': 1}
 def detect_paths():
-    """Standardized path detector for the 'raw_data' folder"""
-    # Get the directory where dataset.py is actually saved
+    """Robust path detector for local 'raw_data' folder"""
+    # Force the path to be relative to the script location
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # Path for input and output relative to the script
+    # If we are in Colab and just cloned, we might need to look one level up or down
     data_root = os.path.join(script_dir, 'raw_data')
     output_dir = os.path.join(script_dir, 'processed_data')
 
-    if not os.path.exists(data_root):
-        print(f"❌ Error: 'raw_data' folder not found in {script_dir}")
-        return None, None
-
+    # If the folder isn't found, we return the expected strings anyway 
+    # so the script gives a 'Folder Not Found' error instead of a 'TypeError'
     return data_root, output_dir
 
 class MaestroPreprocessor:
