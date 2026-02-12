@@ -9,7 +9,7 @@ This repository implements a Transformer-based architecture to classify cognitiv
 To initialize the environment in Google Colab, run the following block to clone the repository and enter the project directory:
 
 ```bash
-!git clone https://github.com/divyaprakash1845/UGP-01
+git clone https://github.com/divyaprakash1845/UGP-01
 %cd UGP-01
 
 ```
@@ -45,6 +45,3 @@ python dataset.py
 
 ```bash
 python train.py
-
-
-Would you like me to help you verify that your `dataset.py` is correctly looking "one level up" for the `raw_data` folder now that the TA will be inside the `UGP-01` directory?
